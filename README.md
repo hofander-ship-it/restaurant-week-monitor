@@ -1,28 +1,24 @@
-# Restaurant Week Monitor — PWA na iPhone
+# Restaurant Week Monitor — wersja automatyczna
 
-## Co robi
-- Dodawanie linków do postów/rolek Instagram (Szczecin lub Śląsk).
-- Otwieranie postów do ręcznego polubienia z zalogowanego konta @hofander.
-- Oznaczanie wpisów jako „Polubione”, „Pominięte”, „Do sprawdzenia”.
-- Filtry, lokalna historia, eksport CSV/JSON i import JSON.
-- Instalacja na ekranie początkowym iPhone'a, możliwość pracy z zapisanymi danymi offline.
+Monitor na iPhone, konto @hofander, Szczecin i Śląsk.
 
-## Czego nie robi
-Nie wyszukuje automatycznie postów, nie loguje się do Instagrama i nie klika „Lubię to” za użytkownika. Nie wymaga hasła do Instagrama. Status „Polubione” to własne oznaczenie użytkownika, nie weryfikacja przez Instagram.
+## Co jest automatyczne
 
-## Uruchomienie na iPhonie (zalecane: GitHub Pages)
-1. Załóż konto GitHub i utwórz nowe publiczne repozytorium, np. `restaurant-week-monitor`.
-2. Prześlij **zawartość** folderu `rw-pwa` do głównego katalogu repozytorium (index.html, app.js, sw.js, manifest.webmanifest, ikony).
-3. W repozytorium otwórz Settings → Pages → Build and deployment → Deploy from a branch; wybierz `main` i `/ (root)`; zapisz.
-4. Poczekaj na publikację. Adres będzie zwykle `https://TWOJ_LOGIN.github.io/restaurant-week-monitor/` (dokładny adres pokaże GitHub Pages).
-5. Otwórz adres na iPhonie w Safari → Udostępnij → Dodaj do ekranu początkowego → Dodaj.
-6. Otwórz RW Monitor z ekranu iPhone'a. Znalezione w Instagramie linki wklejaj w formularzu. Zaloguj się w aplikacji Instagram jako @hofander, aby ręcznie polubić post po otwarciu linku.
+GitHub Actions uruchamia co około 6 godzin skrypt `scripts/monitor.py`, który sprawdza publiczne wyniki Bing RSS pod kątem bezpośrednich linków do postów/reels Instagram. Znalezione linki zapisuje do `discovered.json`. Aplikacja przy otwarciu pobiera wyniki i dodaje nowe do lokalnej listy. Można też nacisnąć **Sprawdź nowe wyniki**.
 
-## Ważne
-- Historia zapisana jest wyłącznie w pamięci przeglądarki tego iPhone'a (localStorage). Nie synchronizuje się między urządzeniami. Eksportuj JSON na kopię zapasową.
-- Hostowanie w GitHub Pages udostępnia publicznie **kod aplikacji**, ale nie udostępnia Twoich lokalnych wpisów.
-- Aby korzystać na wielu urządzeniach i automatycznie pobierać posty, konieczny byłby backend i zgodne z zasadami Instagram API źródło danych.
-- Serwis Instagram może zmieniać sposób obsługi linków i hashtagów.
+**Ograniczenie:** publiczne wyszukiwarki indeksują tylko niewielką część Instagrama; możliwe jest 0 wyników. Nie jest to pełne monitorowanie hasztagów ani API Instagrama. Skrypt nie loguje się na Instagram, nie lajkuje i nie zbiera prywatnych danych. Oznaczenie „Polubione” to wyłącznie Twoja notatka.
 
-## Test lokalny na komputerze
-`python3 -m http.server 8000` w folderze projektu, następnie `http://localhost:8000`.
+## Aktualizacja istniejącego repozytorium
+
+1. Otwórz `https://github.com/hofander-ship-it/restaurant-week-monitor/upload/main` w Safari.
+2. Rozpakuj ZIP i prześlij **zawartość** paczki, zachowując folder `.github/workflows` i `scripts` (na iOS przesyłanie folderów bywa utrudnione). Alternatywnie użyj komputera albo edytora GitHub do stworzenia obu plików w folderach.
+3. Zatwierdź zmiany w `main` (nadpisz pliki `index.html`, `app.js`, `sw.js`, `README.md`).
+4. GitHub → repozytorium → Settings → Actions → General → Workflow permissions: **Read and write permissions** (jeśli dostępne; konieczne do automatycznego zapisu `discovered.json`).
+5. Zakładka **Actions** → **Public post discovery** → **Run workflow** (pierwszy raz ręcznie). Następne uruchomienia są planowane co około 6 godzin, ale GitHub może je opóźniać.
+6. Otwórz aplikację w Safari, odśwież, wybierz „Sprawdź nowe wyniki”.
+
+Uwaga: na iPhonie GitHub web może nie zachować struktury folderów przy wielokrotnym wyborze plików. W razie potrzeby dodaj `scripts/monitor.py` i `.github/workflows/monitor.yml` przez GitHub **Add file → Create new file**, wpisując pełną ścieżkę.
+
+## Prywatność
+
+Historia polubień i pominięć jest przechowywana lokalnie w przeglądarce i nie synchronizuje się między urządzeniami. GitHub Pages i `discovered.json` są publiczne; nie umieszczaj w repozytorium haseł ani tokenów.
